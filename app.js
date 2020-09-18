@@ -1,20 +1,20 @@
 // Based on https://github.com/ericf/express-handlebars
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 const express = require('express');
-const hb  = require('express-handlebars');
+const hb = require('express-handlebars');
 const app = express();
 
 const mysql = require('mysql');
 const connection = mysql.createConnection({
-  host     : 'localhost',
-  user     : 'root',
-  password : 'password',
-  database : 'Gold'
+    host: 'sh4ob67ph9l80v61.cbetxkdyhwsb.us-east-1.rds.amazonaws.com	',
+    user: 'icvv21r4rskziu4k',
+    password: 'gb3cl5j7lccuy8si',
+    database: 'c47ui3axo0ekv6ij'
 });
 
 
-app.engine('handlebars', hb({defaultLayout: 'index'}));
+app.engine('handlebars', hb({ defaultLayout: 'index' }));
 app.set('view engine', 'handlebars');
 app.use(express.urlencoded());
 
@@ -28,10 +28,10 @@ app.get('/', function (req, res) {
             throw error;
         }
         connection.query('SELECT * FROM games', (error, games, fields) => {
-        if (error) {
-          throw error;
-        }
-        res.render('home', { usersByScore, games});
+            if (error) {
+                throw error;
+            }
+            res.render('home', { usersByScore, games });
         });
     });
 
@@ -45,87 +45,87 @@ app.get('/', function (req, res) {
 
 
 
-app.get('/Players/search', function (req, res){
-  var userName = "";
-  const select_players = "SELECT * FROM users natural join usersProfiles WHERE users.userName LIKE '%" + userName + "%';";
-  connection.query(select_players, (error, players, fields) => {
-    if (error) {
-      throw error;
-    }
-    res.render('playerPage',{'players':players});
-  });
+app.get('/Players/search', function (req, res) {
+    var userName = "";
+    const select_players = "SELECT * FROM users natural join usersProfiles WHERE users.userName LIKE '%" + userName + "%';";
+    connection.query(select_players, (error, players, fields) => {
+        if (error) {
+            throw error;
+        }
+        res.render('playerPage', { 'players': players });
+    });
 });
-app.post('/Players/search', function (req, res){
+app.post('/Players/search', function (req, res) {
     // const rank = req.body.rank;
     const player = req.body.typeahead;
-    res.redirect('/Players/search/'+ player);
-    
-  });
-app.get('/Players/search/:user', function (req, res){
-  var userName = req.params.user;
-  const select_players = "SELECT * FROM users natural join usersProfiles WHERE users.userName LIKE '%" + userName + "%';";
-  connection.query(select_players, (error, players, fields) => {
-    if (error) {
-      throw error;
-    }
-    res.render('playerPage',{'players':players});
-  });
+    res.redirect('/Players/search/' + player);
+
+});
+app.get('/Players/search/:user', function (req, res) {
+    var userName = req.params.user;
+    const select_players = "SELECT * FROM users natural join usersProfiles WHERE users.userName LIKE '%" + userName + "%';";
+    connection.query(select_players, (error, players, fields) => {
+        if (error) {
+            throw error;
+        }
+        res.render('playerPage', { 'players': players });
+    });
 });
 app.get('/Games', function (req, res) {
     let result1, result2;
     connection.query('SELECT * FROM games', (error, results, fields) => {
-                if (error) {
-                    throw error;
-                }
-                var topGameQuery = 'SELECT gameName,b.tHours FROM (SELECT sum(totalHours) as tHours,gameID FROM gameUsers GROUP BY gameID ORDER BY tHours DESC) AS b NATURAL JOIN games LIMIT 10;';
-                connection.query(topGameQuery, (error, gameList, fields) => {
-                    if (error) {
-                        throw error;
-                    }
-                    res.render('gamePage',{'games':results,'gameList':gameList});
-            });
-
+        if (error) {
+            throw error;
+        }
+        var topGameQuery = 'SELECT gameName,b.tHours FROM (SELECT sum(totalHours) as tHours,gameID FROM gameUsers GROUP BY gameID ORDER BY tHours DESC) AS b NATURAL JOIN games LIMIT 10;';
+        connection.query(topGameQuery, (error, gameList, fields) => {
+            if (error) {
+                throw error;
+            }
+            res.render('gamePage', { 'games': results, 'gameList': gameList });
         });
+
+    });
 });
 
 
 app.get('/Games/:gameID', function (req, res) {
 
-    const  select_game = 'SELECT * FROM games WHERE gameID = ?;';
+    const select_game = 'SELECT * FROM games WHERE gameID = ?;';
     const select_top_players = 'SELECT * FROM gameUsers WHERE gameID = ? ORDER BY score DESC LIMIT 10 ;';
     const select_all_players = 'SELECT * FROM usersProfiles NATURAL JOIN gameUsers WHERE gameID = ? ;';
     const select_most_hours = 'SELECT * FROM gameUsers WHERE gameID = ? ORDER BY totalHours DESC LIMIT 10;';
 
-    connection.query(select_game,req.params.gameID, (error, gameInfo, fields) => {
+    connection.query(select_game, req.params.gameID, (error, gameInfo, fields) => {
         if (error) {
             throw error;
         }
-        connection.query(select_top_players,req.params.gameID, (error, topPlayers, fields) => {
+        connection.query(select_top_players, req.params.gameID, (error, topPlayers, fields) => {
             if (error) {
                 throw error;
             }
-            connection.query(select_all_players,req.params.gameID, (error, allPlayers, fields) => {
+            connection.query(select_all_players, req.params.gameID, (error, allPlayers, fields) => {
                 if (error) {
                     throw error;
                 }
 
-                connection.query(select_most_hours,req.params.gameID, (error, mostHours, fields) => {
+                connection.query(select_most_hours, req.params.gameID, (error, mostHours, fields) => {
                     if (error) {
                         throw error;
                     }
 
-                    res.render('specificGamePage',{
-                        'Game':gameInfo[0],
-                        'topPlayers':topPlayers,
-                        'mostHours':mostHours,
-                        'AllPlayers':allPlayers
+                    res.render('specificGamePage', {
+                        'Game': gameInfo[0],
+                        'topPlayers': topPlayers,
+                        'mostHours': mostHours,
+                        'AllPlayers': allPlayers
                     });
                 });
             });
         });
 
 
-});
+    });
 
 
 
@@ -214,9 +214,9 @@ app.post('/api/createclan', (req, res) => {
 //Jon's Code
 
 const myProfile = "select distinct * from users natural join usersProfiles natural join gameUsers, games where users.userName='itzjt' and gameUsers.gameID = games.gameID;"
-app.get('/user/myprofile', function(req, res){
+app.get('/user/myprofile', function (req, res) {
     connection.query(myProfile, (error, results, fields) => {
-        if(error){
+        if (error) {
             throw error;
         }
         console.log(results);
@@ -225,38 +225,38 @@ app.get('/user/myprofile', function(req, res){
     });
 
 });
-app.get('/user/myprofile/friendslist', function(req, res){
+app.get('/user/myprofile/friendslist', function (req, res) {
     const viewFriendsandPictures = "select distinct profilePictures, userFriend from friends, usersProfiles where friends.userName = 'iTzjT' and usersProfiles.userName = friends.userFriend;"
-    connection.query(viewFriendsandPictures, (error, results, friends)=>{
-        if(error){
+    connection.query(viewFriendsandPictures, (error, results, friends) => {
+        if (error) {
             throw error;
         }
         console.log(results);
         console.log("My friends list has loaded...")
-        res.render("mainProfilefriendsList",{results});
+        res.render("mainProfilefriendsList", { results });
     })
 });
 
 const viewFriends = 'select userFriend from friends where userName = "iTzjT";';
 
-app.get('/user/:userName/friendslist', function(req, res){
+app.get('/user/:userName/friendslist', function (req, res) {
     const viewFriendsandPictures = "select distinct profilePictures, userFriend from friends, usersProfiles where friends.userName = '" + req.params.userName + "' and usersProfiles.userName = friends.userFriend;"
-    connection.query(viewFriendsandPictures, (error, results, friends)=>{
-        if(error){
+    connection.query(viewFriendsandPictures, (error, results, friends) => {
+        if (error) {
             throw error;
         }
         console.log(results);
         console.log("My friends list has loaded...")
-        res.render("friendsList",{results});
+        res.render("friendsList", { results });
     })
 });
 
 // Bon
-app.get('/user/:userName/clanPage', function(req, res){
+app.get('/user/:userName/clanPage', function (req, res) {
     var userName = req.params.userName;
     const userProfile = "SELECT * FROM teamUser WHERE clanName = (SELECT clanName FROM teamUser WHERE userName = '" + userName + "');";
-    connection.query(userProfile, (error,results,fields) =>{
-        if(error){
+    connection.query(userProfile, (error, results, fields) => {
+        if (error) {
             throw error;
         }
         console.log(results);
@@ -267,54 +267,54 @@ app.get('/user/:userName/clanPage', function(req, res){
 
 
 
-app.get('/user/:userName', function(req, res){
+app.get('/user/:userName', function (req, res) {
     var userName = req.params.userName;
-    const userProfile = "select distinct * from users natural join usersProfiles natural join gameUsers, games where users.userName='" + userName +"' and gameUsers.gameID = games.gameID;"
+    const userProfile = "select distinct * from users natural join usersProfiles natural join gameUsers, games where users.userName='" + userName + "' and gameUsers.gameID = games.gameID;"
 
-    connection.query(userProfile, (error,results,fields) =>{
-        if(error){
+    connection.query(userProfile, (error, results, fields) => {
+        if (error) {
             throw error;
         }
         res.render('otherProfiles', { results });
     })
 });
-app.get('/user/:userName/addfriend', function(req, res){
+app.get('/user/:userName/addfriend', function (req, res) {
     userFriend = req.params.userName;
     const addfriend_query = "CALL addingFriends (?,?)";
-    
-    try{
-        connection.query(addfriend_query,[loggedinAccount,userFriend],(error,results,fields)=>{
-            if(error){
+
+    try {
+        connection.query(addfriend_query, [loggedinAccount, userFriend], (error, results, fields) => {
+            if (error) {
                 throw error;
             }
-            res.redirect('/user/'+ req.params.userName);
+            res.redirect('/user/' + req.params.userName);
 
         })
-    }catch(error){
+    } catch (error) {
         console.log(error);
-        res.redirect('/user/'+ userFriend);
+        res.redirect('/user/' + userFriend);
     }
 });
-app.get('/user/:userName/removeFriend', function(req, res){
+app.get('/user/:userName/removeFriend', function (req, res) {
     userFriend = req.params.userName;
     const addfriend_query = "CALL removingFriends(?,?)";
-    connection.query(addfriend_query,[loggedinAccount, userFriend],(error,results,fields)=>{
-        if(error){
-            throw error;   
+    connection.query(addfriend_query, [loggedinAccount, userFriend], (error, results, fields) => {
+        if (error) {
+            throw error;
         }
         console.log('Friend removed lol bye bye');
         res.redirect('/user/myprofile/friendslist');
     })
 });
-app.get('/user/:userName/addClanMember', function(req, res){
+app.get('/user/:userName/addClanMember', function (req, res) {
     // const addfriend_query = "insert into teamUser values('Red','" + req.params.userName + "', 'Member');"
     const addfriend_query = "CALL addClanMember('Red', '" + req.params.userName + "');"
-    connection.query(addfriend_query,(error,results,fields)=>{
-        if(error){
+    connection.query(addfriend_query, (error, results, fields) => {
+        if (error) {
             throw error;
         }
         console.log('it worked LOL.....');
-        res.redirect('/user/'+ req.params.userName);
+        res.redirect('/user/' + req.params.userName);
     })
 });
 
