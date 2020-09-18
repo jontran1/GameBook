@@ -1,9 +1,10 @@
 // Based on https://github.com/ericf/express-handlebars
 
-const port = process.env.YOUR_PORT || process.env.PORT || 80;
 const express = require('express');
 const hb = require('express-handlebars');
 const app = express();
+app.set('port', (process.env.PORT || 3000));
+
 
 const mysql = require('mysql');
 const connection = mysql.createConnection({
