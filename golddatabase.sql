@@ -1,4 +1,5 @@
-USE Gold;
+CREATE DATABASE IF NOT EXISTS `c47ui3axo0ekv6ij`;
+USE `c47ui3axo0ekv6ij`;
 SET SQL_SAFE_UPDATES = 0;
 
 drop table if exists users;
@@ -477,18 +478,8 @@ END //
 
 delimiter ;
 
--- create table teamUser(clanName varchar(127), userName varchar(127), clanRank varchar(127), PRIMARY KEY(userName));
--- Search for user0 and user1 in the website or database.
+
 insert into users values('User0','Hello World?','HelloWorld@gmail.com','12-12-12');
--- Jonathan's Test Trigger for users. This test will insert games automacically into the gameusers table.
--- The search games in bio trigger works for update and insert
+
 insert into users values('User1','AreYouSerious?','GoodJob@gmail.com','12-12-12');
 Update usersprofiles set bio = 'I love games like Overwatch, Assassins Creed Odyessey, Red Dead Redemption 2, The Elder Scrolls V: Skyrim, The Legend of Zelda: Breath of the Wild, Counter-Strike,  rainbow six seige, world of warcraft , Fortnite , Black Ops 4, HeartStone, Rocket League ' Where userName = 'User1';
--- Check the webiste you can see that this trigger works. 
--- select * from gameUsers where userName = 'User0';
--- delete from gameusers where userName = 'User0';
-
-
--- SELECT * FROM clanList;
--- DELETE FROM clanList WHERE userName = 'AntMan';
--- SELECT * FROM clanList WHERE userName = 'AntMan';
